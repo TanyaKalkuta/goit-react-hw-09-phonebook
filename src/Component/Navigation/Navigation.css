@@ -1,0 +1,29 @@
+.Navbar {
+  list-style: none;
+  top: 0;
+  left: 0;
+  position: sticky;
+  z-index: 1100;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  min-height: 50px;
+  padding-right: 24px;
+  padding-left: 24px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  color: #fff;
+}
+.NavLink {
+  margin-right: 25px;
+  font-size: 25px;
+  font-weight: 700;
+  color: rgb(154, 116, 192);
+  text-decoration: none;
+}
+
+.NavLink--active {
+  color: palevioletred;
+  text-decoration-line: underline;
+  background-color: inherit;
+}
