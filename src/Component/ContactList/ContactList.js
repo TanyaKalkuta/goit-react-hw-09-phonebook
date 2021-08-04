@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { deleteContact } from '../../redux/phonebook/phonebook-operations';
 import ElementContactList from '../ElementContactList/ElementContactList';
 import styles from './ContactList.module.css';
@@ -10,61 +9,86 @@ import {
   getVisibleContacts,
 } from '../../redux/phonebook/phonebook-selectors';
 
-class ContactList extends Component {
-  static propTypes = {
-    onFetchContacts: PropTypes.func,
-    contacts: PropTypes.array.isRequired,
-    onClick: PropTypes.func.isRequired,
-  };
+export default function ContactList() {
+  const dispatch = useDispatch();
+  //   componentDidMount() {
+  //     this.props.onfetchContacts();
+  //   }
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
-  componentDidMount() {
-    this.props.onfetchContacts();
-  }
+  const contacts = useSelector(getVisibleContacts);
+  const isLoadingContacts = useSelector(getLoading);
+  // const mapStateToProps = state => ({
+  //   contacts: getVisibleContacts(state),
+  //   isLoadingContacts: getLoading(state),
+  // });
 
-  render() {
-    return (
-      <>
-        {this.props.isLoadingContacts && <h1>....Загружаем</h1>}
+  // const mapDispatchToProps = dispatch => ({
+  //   onClick: id => dispatch(deleteContact(id)),
+  //   onfetchContacts: () => dispatch(fetchContacts()),  // });
 
-        <ul className={styles.contact_list}>
-          {this.props.contacts.map(({ id, name, number }) => (
-            <li key={id} className={styles.contact_item}>
-              <ElementContactList name={name} number={number} />
-              <button
-                type="button"
-                onClick={() => {
-                  this.props.onClick(id);
-                }}
-                className={styles.item_button}
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
-      </>
-    );
-  }
+  return (
+    <>
+      {isLoadingContacts && <h1>....Загружаем</h1>}
+
+      <ul className={styles.contact_list}>
+        {contacts.map(({ id, name, number }) => (
+          <li key={id} className={styles.contact_item}>
+            <ElementContactList name={name} number={number} />
+            <button
+              type="button"
+              onClick={() => dispatch(deleteContact(id))}
+              className={styles.item_button}
+            >
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
 }
-//-------------перенесли в   phonebook-selectors
-// const getVisibleContacts = (contacts, filter) => {
-//   const normalizedFilter = filter.toLowerCase();
 
-//   return contacts.filter(contact =>
-//     contact.name.toLowerCase().includes(normalizedFilter),
-//   );
-// };
-const mapStateToProps = state => ({
-  contacts: getVisibleContacts(state),
-  isLoadingContacts: getLoading(state),
-  //----------было:
-  // const mapStateToProps = ({ contacts: { items, filter, loading } }) => ({
-  //   contacts: getVisibleContacts(items, filter),
-  //   isLoadingContacts: loading,
-});
+// class ContactList extends Component {
+//   componentDidMount() {
+//     this.props.onfetchContacts();
+//   }
 
-const mapDispatchToProps = dispatch => ({
-  onClick: id => dispatch(deleteContact(id)),
-  onfetchContacts: () => dispatch(fetchContacts()),
-});
-export default connect(mapStateToProps, mapDispatchToProps)(ContactList);
+//   render() {
+//     return (
+//       <>
+//         {this.props.isLoadingContacts && <h1>....Загружаем</h1>}
+
+//         <ul className={styles.contact_list}>
+//           {this.props.contacts.map(({ id, name, number }) => (
+//             <li key={id} className={styles.contact_item}>
+//               <ElementContactList name={name} number={number} />
+//               <button
+//                 type="button"
+//                 onClick={() => {
+//                   this.props.onClick(id);
+//                 }}
+//                 className={styles.item_button}
+//               >
+//                 Delete
+//               </button>
+//             </li>
+//           ))}
+//         </ul>
+//       </>
+//     );
+//   }
+// }
+
+// const mapStateToProps = state => ({
+//   contacts: getVisibleContacts(state),
+//   isLoadingContacts: getLoading(state),
+// });
+
+// const mapDispatchToProps = dispatch => ({
+//   onClick: id => dispatch(deleteContact(id)),
+//   onfetchContacts: () => dispatch(fetchContacts()),
+// });
+// export default connect(mapStateToProps, mapDispatchToProps)(ContactList);

@@ -1,54 +1,45 @@
 import React, { useState, useCallback } from 'react';
-import {
-  useDispatch,
-  // useSelector
-} from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { addContact } from '../../redux/phonebook/phonebook-operations';
 import { v4 as uuidv4 } from 'uuid';
 import styles from './ContactForm.module.css';
 
-// const mapDispatchToProps = dispatch => ({
-//   onSubmit: (name, number) => dispatch(addContact(name, number)),
-// });
 export default function ContactForm() {
   const dispatch = useDispatch();
-  const onSubmit = useCallback(
-    (name, number) => {
-      dispatch(addContact(name, number));
-    },
-    [dispatch],
-  );
+
+  const nameInputId = uuidv4();
+  const numberInputId = uuidv4();
+
   const initialState = {
     name: '',
     number: '',
   };
   const [state, setState] = useState(initialState);
-  // const [name, setName] = useState('');
-  // const [number, setNumber] = useState('');
-  const nameInputId = uuidv4();
-  const numberInputId = uuidv4();
 
   /** Отвечает за обновление состояния*/
-  const handleChange = e => {
+  const handleChange = useCallback(e => {
     const { name, value } = e.currentTarget;
     setState(prev => ({
       ...prev,
       [name]: value,
     }));
-  };
+  }, []);
   /** Вызывается при отправке формы */
   // Проп который передается форме для вызова при сабмите
 
-  const handleSubmit = e => {
-    e.preventDefault();
-    const { name, number } = state;
-    if (name === '' && number === '') {
-      return alert('Please fill empty fields');
-    }
-    onSubmit(name, number);
-    reset();
-    return;
-  };
+  const handleSubmit = useCallback(
+    e => {
+      e.preventDefault();
+      const { name, number } = state;
+      if (name === '' && number === '') {
+        return alert('Please fill empty fields');
+      }
+      dispatch(addContact(name, number));
+      reset();
+      return;
+    },
+    [dispatch, state],
+  );
 
   const reset = () => {
     setState({ name: '', number: '' });
